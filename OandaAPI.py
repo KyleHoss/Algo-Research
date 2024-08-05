@@ -61,10 +61,6 @@ class OandaAPI:
         import requests
         import pandas as pd
 
-        print(self.ACCOUNT_ID)
-        print(self.API_URL)
-        print(self.API_TOKEN)
-
         # Convert Dates to DateTime objects
         start_dateTime = pd.to_datetime(start_date)
         end_dateTime = pd.to_datetime(end_date)
@@ -86,7 +82,6 @@ class OandaAPI:
 
         # Request for Candle Stick Data
         json_response = requests.get("https://"+self.API_URL+candle_url, headers=auth_header, params=parameters).json()
-        print(json_response)
 
         # Create Pandas DataFrame
         if as_pandas is True:
@@ -177,13 +172,13 @@ class OandaAPI:
 
                 else:
                     # Append DateTimes to lists
-                    start_datetime_list.append(new_start_dateTime)
+                    start_datetime_list.append(new_start_datetime)
                     end_datetime_list.append(max_date) 
                     
                     # Overwrite existing variables
                     candle_secs = MAX_CANDLES * math.floor(self.granularity_conv_dict.get(granularity))   # Max candles forwards in seconds
-                    new_start_dateTime = max_date+timedelta(seconds=candle_secs)                          # Set new date time to old max_date plus additional candle secs
-                    max_date = new_start_dateTime+timedelta(seconds=candle_secs)                          # Set new max date to last start datetime plus additional candle secs
+                    new_start_datetime = max_date+timedelta(seconds=self.granularity_conv_dict.get(granularity))                          # Set new date time to old max_date plus additional candle secs
+                    max_date = new_start_datetime+timedelta(seconds=candle_secs)                          # Set new max date to last start datetime plus additional candle secs
 
             # Create Loading Bar 
             for i in tqdm.tqdm(range(len(start_datetime_list)),                           # Iteration range
@@ -200,7 +195,7 @@ class OandaAPI:
             # Return Candles Stick DataFrame
             return candles_df
             
-    def show_granularity(self)-> dict:
+    def show_granularity(self):
         import pandas as pd
 
         # Values of Granularity
