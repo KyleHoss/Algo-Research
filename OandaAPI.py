@@ -89,7 +89,11 @@ class OandaAPI:
             candle_df = pd.json_normalize(json_response["candles"])
 
             # Drop complete Column
-            candle_df.drop('complete', inplace=True, axis=1)
+            try: 
+                candle_df.drop('complete', inplace=True, axis=1)
+            except Exception as e:
+                print(json_response)
+                print(e)
 
             # Rename Columns
             candle_df.rename(inplace=True,columns={'time':'DateTime','volume':'Volume','mid.o':'Open',
